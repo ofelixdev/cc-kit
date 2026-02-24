@@ -1,0 +1,35 @@
+{
+  "name": "@ofelixdev/cc-kit",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Claude Code knowledge base installer - agents, skills, workflows",
+  "main": "bin/index.js",
+  "bin": {
+    "cc-kit": "bin/index.js"
+  },
+  "files": [
+    "bin"
+  ],
+  "keywords": [
+    "claude",
+    "claude-code",
+    "ai",
+    "agents",
+    "skills",
+    "knowledge-base",
+    "cli"
+  ],
+  "author": "ofelixdev",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ofelixdev/cc-kit.git"
+  },
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "commander": "^12.1.0",
+    "fs-extra": "^11.3.0",
+    "giget": "^2.0.0",
+    "ora": "^8.2.0"
+  }
+}
