@@ -1,56 +1,49 @@
 ---
-description: Create project plan using project-planner agent. No code writing - only plan file generation.
+description: Create project plan using Claude Code's native Plan mode with project-planner expertise. No code writing - planning only.
 ---
 
-# /plan - Project Planning Mode
+# /plan - Project Planning
 
 $ARGUMENTS
 
 ---
 
-## 🔴 CRITICAL RULES
+## Protocol
 
-1. **NO CODE WRITING** - This command creates plan file only
-2. **Use project-planner agent** - NOT Claude Code's native Plan mode
-3. **Socratic Gate** - Ask clarifying questions before planning
-4. **Dynamic Naming** - Plan file named based on task
-
----
-
-## Task
-
-Use the `project-planner` agent with this context:
-
-```
-CONTEXT:
-- User Request: $ARGUMENTS
-- Mode: PLANNING ONLY (no code)
-- Output: docs/PLAN-{task-slug}.md (dynamic naming)
-
-NAMING RULES:
-1. Extract 2-3 key words from request
-2. Lowercase, hyphen-separated
-3. Max 30 characters
-4. Example: "e-commerce cart" → PLAN-ecommerce-cart.md
-
-RULES:
-1. Follow project-planner.md Phase -1 (Context Check)
-2. Follow project-planner.md Phase 0 (Socratic Gate)
-3. Create PLAN-{slug}.md with task breakdown
-4. DO NOT write any code files
-5. REPORT the exact file name created
-```
+1. **Enter Plan Mode** — Use Claude Code's native Plan mode (EnterPlanMode tool)
+2. **Load Expertise** — Read `.claude/agents/project-planner.md` and `.claude/skills/plan-writing/SKILL.md`
+3. **Socratic Gate** — If request is unclear, ask 1-3 clarifying questions before planning
+4. **Create Plan** — Follow the project-planner's framework:
+   - **Analysis**: Requirements, constraints, risks, project type (WEB/MOBILE/BACKEND)
+   - **Task Breakdown**: Tasks with INPUT → OUTPUT → VERIFY criteria
+   - **Agent Assignment**: Map each task to the right agent and skill
+   - **Verification**: Define Phase X checklist with validation scripts
+5. **Present Plan** — Show the structured plan to the user for review
+6. **On Approval** — Exit plan mode (ExitPlanMode) and begin implementation
 
 ---
 
-## Expected Output
+## Rules
 
-| Deliverable | Location |
-|-------------|----------|
-| Project Plan | `docs/PLAN-{task-slug}.md` |
-| Task Breakdown | Inside plan file |
-| Agent Assignments | Inside plan file |
-| Verification Checklist | Phase X in plan file |
+- **NO CODE WRITING** during planning — plan only
+- Use the **project-planner methodology** from `.claude/agents/project-planner.md`
+- Follow **project type routing**: Mobile → mobile-developer, Web → frontend-specialist, API → backend-specialist
+- Plans stay in Claude Code's native plan system — visible in the UI, persistent across conversation
+- If user explicitly wants a persistent document, write to `docs/PLAN-{task-slug}.md` after approval
+
+---
+
+## Plan Structure (Required Sections)
+
+| Section | Content |
+|---|---|
+| **Overview** | What & why |
+| **Project Type** | WEB / MOBILE / BACKEND (explicit) |
+| **Success Criteria** | Measurable outcomes |
+| **Tech Stack** | Technologies with rationale |
+| **File Structure** | Directory layout |
+| **Task Breakdown** | All tasks with Agent + Skill + INPUT → OUTPUT → VERIFY |
+| **Phase X** | Final verification checklist with scripts |
 
 ---
 
@@ -58,25 +51,13 @@ RULES:
 
 Tell user:
 ```
-[OK] Plan created: docs/PLAN-{slug}.md
+Plan ready for review.
 
 Next steps:
-- Review the plan
-- Run `/create` to start implementation
-- Or modify plan manually
+- Review and approve the plan
+- I'll begin implementation following the task breakdown
+- Or request modifications before starting
 ```
-
----
-
-## Naming Examples
-
-| Request | Plan File |
-|---------|-----------|
-| `/plan e-commerce site with cart` | `docs/PLAN-ecommerce-cart.md` |
-| `/plan mobile app for fitness` | `docs/PLAN-fitness-app.md` |
-| `/plan add dark mode feature` | `docs/PLAN-dark-mode.md` |
-| `/plan fix authentication bug` | `docs/PLAN-auth-fix.md` |
-| `/plan SaaS dashboard` | `docs/PLAN-saas-dashboard.md` |
 
 ---
 
@@ -86,4 +67,5 @@ Next steps:
 /plan e-commerce site with cart
 /plan mobile app for fitness tracking
 /plan SaaS dashboard with analytics
+/plan refactor authentication system
 ```

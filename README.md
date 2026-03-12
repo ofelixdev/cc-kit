@@ -1,8 +1,8 @@
 # cc-kit
 
-CLI que instala uma knowledge base completa no Claude Code — agents, skills, workflows, scripts de validacao.
+CLI que instala uma knowledge base completa no Claude Code — agents, skills, workflows, hooks, rules e scripts de validacao.
 
-Um comando e seu Claude Code ganha **20 agents especialistas**, **37+ skills**, **11 workflows** e **scripts Python de validacao**. Tudo vai pra `.claude/` do seu projeto.
+Um comando e seu Claude Code ganha **20 agents especialistas**, **108 skills**, **11 workflows**, **4 hooks de automacao**, **6 rules contextuais** e **scripts Python de validacao**. Tudo vai pra `.claude/` do seu projeto.
 
 ---
 
@@ -10,9 +10,9 @@ Um comando e seu Claude Code ganha **20 agents especialistas**, **37+ skills**, 
 
 O Claude Code por padrao nao sabe nada sobre seu projeto. Ele e poderoso, mas generico.
 
-O **cc-kit** resolve isso instalando uma base de conhecimento curada dentro do `.claude/` — agents que funcionam como especialistas (backend, frontend, seguranca, mobile, etc), skills com patterns e boas praticas, workflows pra tarefas estruturadas, e scripts Python pra validacao automatica.
+O **cc-kit** resolve isso instalando uma base de conhecimento curada dentro do `.claude/` — agents que funcionam como especialistas (backend, frontend, seguranca, mobile, etc), skills com patterns e boas praticas, workflows pra tarefas estruturadas, hooks que automatizam formatacao e protecao, rules que ativam automaticamente por contexto, e scripts Python pra validacao.
 
-Basicamente: **seu Claude Code vira um time de especialistas**.
+Basicamente: **seu Claude Code vira um time de especialistas que age automaticamente**.
 
 ---
 
@@ -35,16 +35,17 @@ cc-kit init
 
 ```
 .claude/
-├── agents/           # 20 agents especialistas (.md)
-├── skills/           # 37+ skills com patterns e boas praticas
-├── workflows/        # 11 workflows estruturados
-├── scripts/          # Scripts Python de validacao (checklist, verify_all, etc)
-├── rules/CLAUDE.md   # Regras estendidas de coding standards
-├── .shared/          # Dados compartilhados (UI/UX datasets, etc)
-├── ARCHITECTURE.md   # Indice completo da knowledge base
-└── mcp_config.json   # Config MCP servers (com placeholder API key)
+├── agents/              # 20 agents especialistas
+├── skills/              # 108 skills (cc-kit + trailofbits + vercel + community)
+├── workflows/           # 11 workflows estruturados
+├── hooks/               # 4 hooks de automacao (format, protect, notify, compact)
+├── rules/               # 6 rules (1 global + 5 path-conditional)
+├── scripts/             # Scripts Python de validacao
+├── settings.template.json → settings.json (criado na primeira instalacao)
+├── ARCHITECTURE.md      # Indice completo da knowledge base
+└── mcp_config.json      # Config MCP servers
 
-CLAUDE.md             # Regras do projeto na raiz (criado se nao existir)
+CLAUDE.md                # Regras do projeto na raiz (criado se nao existir)
 ```
 
 ---
@@ -56,7 +57,7 @@ CLAUDE.md             # Regras do projeto na raiz (criado se nao existir)
 Baixa e instala a knowledge base no `.claude/`.
 
 - **Merge inteligente**: se `.claude/` ja existe, faz merge — seu conteudo existente e preservado
-- **Paths protegidos**: `settings.json`, `settings.local.json`, `plans/`, `memory/`, `projects/` **nunca** sao tocados
+- **Paths protegidos**: `settings.json`, `settings.local.json`, `plans/`, `memory/`, `projects/` **nunca** sao sobrescritos
 - `CLAUDE.md` da raiz so e criado se nao existir (use `--force` pra sobrescrever)
 
 ```bash
@@ -86,33 +87,99 @@ cc-kit status
 
 ---
 
-## O que vem dentro
+## Principais Features
 
-### Agents (20)
+### Sistema Autonomo de Agents
 
-Arquivos de conhecimento especialista que o Claude le on-demand:
+O `CLAUDE.md` instalado na raiz funciona como diretiva — o Claude Code automaticamente detecta o dominio da tarefa e carrega o agent + skills correspondentes. Sem precisar pedir nada.
 
-`orchestrator` · `project-planner` · `security-auditor` · `backend-specialist` · `frontend-specialist` · `mobile-developer` · `debugger` · `game-developer` · `test-engineer` · `database-architect` · `devops-engineer` · `performance-optimizer` · `seo-specialist` · `penetration-tester` · `documentation-writer` · `qa-automation-engineer` · `code-archaeologist` · `explorer-agent` · `product-manager` · `product-owner`
+| Dominio | Agent | Skills |
+|---|---|---|
+| Frontend, React, UI | `frontend-specialist` | frontend-design, react-best-practices, tailwind-patterns |
+| Backend, API, Node | `backend-specialist` | api-patterns, nodejs-best-practices |
+| Database, Schema | `database-architect` | database-design |
+| Seguranca, Auth | `security-auditor` | vulnerability-scanner, codeql, semgrep |
+| Testes, Coverage | `test-engineer` | testing-patterns, webapp-testing, coverage-analysis |
+| Debug, Bugs | `debugger` | systematic-debugging |
+| DevOps, Deploy | `devops-engineer` | deployment-procedures, devops, coolify |
+| Mobile | `mobile-developer` | mobile-design |
+| Games | `game-developer` | game-development |
+| Performance | `performance-optimizer` | performance-profiling |
+| SEO | `seo-specialist` | seo-fundamentals |
+| Novo projeto | `orchestrator` | app-builder, architecture |
 
-### Skills (37+)
+### Hooks de Automacao (4)
 
-Patterns, boas praticas e conhecimento por dominio:
+Hooks pre-configurados em `settings.json`:
 
-`clean-code` · `api-patterns` · `database-design` · `frontend-design` · `mobile-design` · `testing-patterns` · `vulnerability-scanner` · `brainstorming` · `plan-writing` · `architecture` · `tailwind-patterns` · `nextjs-react-expert` · `nodejs-best-practices` · `python-patterns` · `rust-pro` · `bash-linux` · `game-development` · `seo-fundamentals` · `performance-profiling` · `webapp-testing` · `tdd-workflow` · `code-review-checklist` · `deployment-procedures` · `mcp-builder` · e mais...
+| Hook | Evento | O que faz |
+|---|---|---|
+| `auto-format.sh` | Apos editar arquivos | Formata com prettier/eslint automaticamente |
+| `protect-files.sh` | Antes de editar | Bloqueia escrita em `.env`, secrets, credentials |
+| `notify-done.sh` | Ao terminar | Notificacao desktop (macOS/Linux) |
+| `post-compact.sh` | Apos compactacao | Re-injeta contexto do projeto |
 
-### Workflows (11)
+### Rules Path-Conditional (5)
 
-Fluxos estruturados de execucao de tarefas:
+Rules em `.claude/rules/` que ativam automaticamente baseado no arquivo sendo editado:
 
-`brainstorm` · `create` · `debug` · `deploy` · `enhance` · `orchestrate` · `plan` · `preview` · `status` · `test` · `ui-ux-pro-max`
+| Rule | Ativa para | O que aplica |
+|---|---|---|
+| `frontend.md` | `*.tsx`, `*.jsx`, `components/`, `pages/` | Acessibilidade, performance, component patterns |
+| `backend.md` | `api/`, `services/`, `controllers/` | Input validation, error handling, seguranca |
+| `testing.md` | `*.test.*`, `__tests__/` | Padrao AAA, isolamento, testes por comportamento |
+| `security.md` | `auth/`, `middleware/`, `session*` | Sem hardcoded secrets, hashing, CSRF, rate limiting |
+| `database.md` | `prisma/`, `migrations/`, `models/` | Migrations, indexes, transactions, soft deletes |
 
-### Scripts de Validacao
+### Settings Template
 
-Scripts Python pra rodar checks no seu projeto:
+Na primeira instalacao, cria um `settings.json` com:
+- Permissoes deny para `.env` e secrets
+- Hooks pre-configurados (format, protect, notify, compact)
+- Nunca sobrescreve se ja existir
+
+---
+
+## Skills (108)
+
+### Por Fonte
+
+| Fonte | Qtd | Foco |
+|---|---|---|
+| **cc-kit** | 36 | Full-stack development |
+| **trailofbits/skills** | 60 | Seguranca, fuzzing, auditoria |
+| **vercel-labs** | 2 | Web design, skill discovery |
+| **obra/superpowers** | 1 | Brainstorming colaborativo |
+| **evolv3-ai/vibe-skills** | 3 | Coolify, DevOps, cloud infra |
+| **addyosmani/web-quality** | 6 | Acessibilidade, performance, SEO |
+
+### Por Categoria
+
+**Frontend & UI**: react-best-practices, web-design-guidelines, tailwind-patterns, frontend-design, ui-ux-pro-max, nextjs-react-expert
+
+**Backend & API**: api-patterns, nodejs-best-practices, python-patterns, modern-python
+
+**Database**: database-design
+
+**Cloud & Infra**: deployment-procedures, server-management, devcontainer-setup, coolify, coolify-cli, devops
+
+**Testing & Quality**: testing-patterns, webapp-testing, tdd-workflow, code-review-checklist, lint-and-validate, coverage-analysis, property-based-testing, debug-buttercup, differential-review
+
+**Seguranca**: vulnerability-scanner, red-team-tactics, codeql, semgrep, entry-point-analyzer, supply-chain-risk-auditor, e 30+ mais
+
+**Fuzzing**: aflpp, libfuzzer, cargo-fuzz, atheris, harness-writing, libafl, ossfuzz, e mais
+
+**Blockchain**: algorand, cairo, cosmos, solana, substrate, ton vulnerability scanners
+
+**Arquitetura**: app-builder, architecture, plan-writing, brainstorming
+
+---
+
+## Scripts de Validacao
 
 ```bash
-python .claude/scripts/checklist.py .              # Validacao por prioridade
-python .claude/scripts/verify_all.py . --url <URL> # Suite completa pre-deploy
+python .claude/scripts/checklist.py .              # Quick: Security → Lint → Schema → Tests → UX → SEO
+python .claude/scripts/verify_all.py . --url <URL> # Full: + Lighthouse, E2E, Mobile, i18n
 ```
 
 ---
@@ -120,9 +187,11 @@ python .claude/scripts/verify_all.py . --url <URL> # Suite completa pre-deploy
 ## Como funciona
 
 1. Baixa o template do GitHub via [giget](https://github.com/unjs/giget)
-2. Faz merge dos agents, skills, workflows e scripts no `.claude/`
-3. Cria um `CLAUDE.md` generico na raiz do projeto (se nao existir)
-4. Nunca toca em configs do usuario (settings, memory, plans)
+2. Faz merge dos agents, skills, workflows, scripts, hooks e rules no `.claude/`
+3. Cria `settings.json` com hooks pre-configurados (se nao existir)
+4. Cria `CLAUDE.md` na raiz do projeto (se nao existir)
+5. Torna hooks executaveis (`chmod +x`)
+6. Nunca toca em configs do usuario (settings existente, memory, plans)
 
 ---
 
@@ -136,11 +205,9 @@ python .claude/scripts/verify_all.py . --url <URL> # Suite completa pre-deploy
 
 ## Creditos
 
-Este projeto foi inspirado no [`@vudovn/ag-kit`](https://www.npmjs.com/package/@vudovn/ag-kit) (Antigravity Kit), que instala agents/skills/workflows pro Gemini CLI no diretorio `.agent/`.
+Inspirado no [`@vudovn/ag-kit`](https://www.npmjs.com/package/@vudovn/ag-kit) (Antigravity Kit). Obrigado ao [@vudovn](https://github.com/vudovn) pela ideia original.
 
-O **cc-kit** adapta esse mesmo conceito pro ecossistema **Claude Code** — todo o conteudo foi reescrito e adaptado pra funcionar com a estrutura `.claude/`, sem nenhuma referencia ao Gemini ou Antigravity.
-
-Obrigado ao [@vudovn](https://github.com/vudovn) pela ideia original e pelo trabalho no ag-kit.
+Skills de seguranca por [Trail of Bits](https://github.com/trailofbits/skills). Skills de web quality por [Addy Osmani](https://github.com/nicepkg/claude-code-awesome-skills). Brainstorming por [obra/superpowers](https://github.com/obra/superpowers). Coolify/DevOps por [evolv3-ai](https://github.com/evolv3-ai/vibe-skills).
 
 ---
 

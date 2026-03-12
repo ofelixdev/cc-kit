@@ -30,6 +30,7 @@ const MERGE_DIRS = [
   'workflows',
   'scripts',
   'rules',
+  'hooks',
   '.shared',
 ];
 
@@ -140,6 +141,33 @@ async function installTemplate({ force, targetPath, branch, quiet, dryRun }) {
       console.log(chalk.dim(`  ${ROOT_CLAUDE_MD} already exists — skipped (use --force to overwrite)`));
     }
 
+    // Install settings.json from template if not exists (never overwrite)
+    const settingsPath = path.join(claude, 'settings.json');
+    const settingsExists = await fs.pathExists(settingsPath);
+    if (!settingsExists) {
+      const settingsTemplate = path.join(tempDir, 'settings.template.json');
+      if (await fs.pathExists(settingsTemplate)) {
+        await fs.copy(settingsTemplate, settingsPath);
+        totalCopied++;
+        if (!quiet) {
+          console.log(chalk.dim('  Created settings.json with hooks & permissions'));
+        }
+      }
+    } else if (!quiet) {
+      console.log(chalk.dim('  settings.json already exists — skipped'));
+    }
+
+    // Make hook scripts executable
+    const hooksDir = path.join(claude, 'hooks');
+    if (await fs.pathExists(hooksDir)) {
+      const hookFiles = await fs.readdir(hooksDir);
+      for (const file of hookFiles) {
+        if (file.endsWith('.sh')) {
+          await fs.chmod(path.join(hooksDir, file), 0o755);
+        }
+      }
+    }
+
     if (spinner) spinner.succeed(chalk.green(`Installed ${totalCopied} files into ${TARGET_DIR}/`));
 
     if (!quiet) {
@@ -148,6 +176,8 @@ async function installTemplate({ force, targetPath, branch, quiet, dryRun }) {
       console.log(chalk.dim('  Skills:    ') + await countItems(path.join(claude, 'skills')));
       console.log(chalk.dim('  Workflows: ') + await countItems(path.join(claude, 'workflows')));
       console.log(chalk.dim('  Scripts:   ') + await countItems(path.join(claude, 'scripts')));
+      console.log(chalk.dim('  Hooks:     ') + await countItems(path.join(claude, 'hooks')));
+      console.log(chalk.dim('  Rules:     ') + await countItems(path.join(claude, 'rules')));
       console.log('');
       console.log(chalk.green('  Done!') + chalk.dim(' Run ') + chalk.cyan('cc-kit status') + chalk.dim(' to verify.'));
       console.log('');
@@ -197,6 +227,7 @@ async function showStatus(targetPath) {
   console.log(chalk.dim('  Workflows: ') + await countItems(path.join(claude, 'workflows')));
   console.log(chalk.dim('  Scripts:   ') + await countItems(path.join(claude, 'scripts')));
   console.log(chalk.dim('  Rules:     ') + await countItems(path.join(claude, 'rules')));
+  console.log(chalk.dim('  Hooks:     ') + await countItems(path.join(claude, 'hooks')));
   console.log('');
 }
 

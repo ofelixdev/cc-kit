@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "name": "devops",
+  "owner": "evolv3-ai",
+  "repo": "vibe-skills",
+  "path": "plugins/admin-devops/skills/devops",
+  "branch": "main",
+  "sha": "20a2bef160716278b69d81ade7bb6f27ef78d57a",
+  "source": "manual"
+}

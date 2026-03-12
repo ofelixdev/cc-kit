@@ -15,28 +15,23 @@ This command adds features or makes updates to existing application.
 ### Steps:
 
 1. **Understand Current State**
-   - Load project state with `python .claude/scripts/session_manager.py info`
-   - Understand existing features, tech stack
+   - Explore codebase to understand existing features and tech stack
+   - Read `CODEBASE.md` if it exists for file dependencies
 
 2. **Plan Changes**
-   - Determine what will be added/changed
-   - Detect affected files
-   - Check dependencies
+   - For major changes: Enter Plan mode, create task breakdown, get approval
+   - For minor changes: Proceed directly
+   - Detect affected files and dependencies
 
-3. **Present Plan to User** (for major changes)
-   ```
-   "To add admin panel:
-   - I'll create 15 new files
-   - Update 8 files
-   - Takes ~10 minutes
-   
-   Should I start?"
-   ```
+3. **Apply with Domain Expertise**
+   - Auto-load relevant agent(s) from `.claude/agents/` based on the domain
+   - Load associated skills from `.claude/skills/`
+   - For multi-domain changes, spawn parallel subagents via Agent tool
+   - Make changes following agent expertise
 
-4. **Apply**
-   - Call relevant agents
-   - Make changes
-   - Test
+4. **Validate**
+   - Run `python .claude/scripts/checklist.py .`
+   - Fix any issues
 
 5. **Update Preview**
    - Hot reload or restart

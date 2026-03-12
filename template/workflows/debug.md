@@ -18,6 +18,8 @@ This command activates DEBUG mode for systematic investigation of issues, errors
 
 When `/debug` is triggered:
 
+**Load expertise**: Read `.claude/agents/debugger.md` and `.claude/skills/systematic-debugging/SKILL.md`
+
 1. **Gather information**
    - Error message
    - Reproduction steps
@@ -37,6 +39,7 @@ When `/debug` is triggered:
    - Apply fix
    - Explain root cause
    - Add prevention measures
+   - Run `python .claude/scripts/checklist.py .` to verify
 
 ---
 

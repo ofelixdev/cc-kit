@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "name": "coolify",
+  "owner": "evolv3-ai",
+  "repo": "vibe-skills",
+  "path": "plugins/admin-devops/skills/coolify",
+  "branch": "main",
+  "sha": "601ca0971cfa72f935f002213bb41ecf485021c9",
+  "source": "manual"
+}
